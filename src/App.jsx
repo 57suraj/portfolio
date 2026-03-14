@@ -144,7 +144,7 @@ function App() {
           <a href="https://www.linkedin.com/in/surajambati5/" target="_blank" rel="noopener noreferrer">[linkedin]</a>
           <a href="https://github.com/57suraj" target="_blank" rel="noopener noreferrer">[github]</a>
         </div>
-        <p className="footer-copy">© 2025 SURAJ AMBATI</p>
+
       </footer>
       <Analytics />
     </div>

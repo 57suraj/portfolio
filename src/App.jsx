@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 
 const GithubIcon = () => (
@@ -14,7 +14,95 @@ const GithubIcon = () => (
   </svg>
 )
 
+const ChevronIcon = ({ open }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="12"
+    height="12"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{
+      marginRight: '6px',
+      verticalAlign: 'text-bottom',
+      transition: 'transform 0.3s ease',
+      transform: open ? 'rotate(90deg)' : 'rotate(0deg)',
+    }}
+  >
+    <polyline points="9 18 15 12 9 6" />
+  </svg>
+)
+
+const deepDives = {
+  'Hybrid Semantic Code Search': {
+    sections: [
+      {
+        label: 'hardest problem',
+        title: 'AST-Aware Chunking with BraceTracker',
+        text: `Most RAG pipelines blindly split code at fixed token intervals, cutting functions in half, orphaning JSDoc from its target, or merging unrelated blocks. I wrote a custom BraceTracker class that pre-scans every file to build a line-by-line depth map of brace balance, while masking out all non-code regions like strings, block comments, and template literal interpolations with nested braces. The chunker only detects boundaries at depth 0, meaning it never splits mid-function or mid-class. Large classes get split by method, not by line count. Each method chunk carries its parent class name for retrieval context. Each of the 12,000+ chunks is a complete, self-contained unit of logic.`,
+      },
+      {
+        label: 'architecture',
+        title: 'Offline Indexing ↔ Online Serving Separation',
+        text: `The ingestion pipeline runs entirely offline. It's a Python batch job that processes JSONL output from the chunker, generates text-embedding-3-small vectors, and upserts into Supabase with rate-limited batches. The search API is a separate FastAPI service that receives a query, vectorizes it in real-time, calls a hybrid_search PostgreSQL RPC with BM25 + pgvector score fusion, and optionally passes candidates through a GPT-4.1-mini reranking layer that scores each chunk 0 to 100 for contextual relevance. Indexing never blocks search. Search never triggers reindexing.`,
+      },
+      {
+        label: 'source integrity',
+        title: 'Zero Hallucinations by Design',
+        text: `Every result returned is a verbatim code chunk with a direct GitHub file path and line range. The LLM reranker evaluates and scores existing chunks but never generates code. If a query matches nothing above the relevance threshold, it returns zero results instead of fabricating an answer. The system prompt enforces strict scoring: config files, type-only definitions, and tangentially related utils get scored below 30 and discarded. What ships to the frontend is always real, traced, production source code.`,
+      },
+    ],
+  },
+  'Connect 4': {
+    sections: [
+      {
+        label: 'hardest problem',
+        title: 'Atomic Joins Under Concurrent Load',
+        text: `If 50 people try to join the same event at once, a basic "read count, check capacity, insert" flow will overfill the event every time. I handled this with Supabase RPC to keep the logic atomic. The capacity check and membership insert happen in a single database transaction. If two requests hit at the same millisecond, the DB handles them in order so the second one gets a clean 'full' response. No race conditions.`,
+      },
+      {
+        label: 'architecture',
+        title: 'Vector-Embedded Event Discovery',
+        text: `Search is way deeper than just matching keywords. Every event description is embedded via OpenAI and stored in pgvector. If someone searches for 'outdoor vibes', it doesn't just look for those words. It finds semantically similar events like hiking or beach meetups that keyword search would completely miss. Combined with Supabase Realtime for the group chat, the discovery flow feels instant and snappy.`,
+      },
+      {
+        label: 'security',
+        title: 'Shift-Left Access Control with Database RLS',
+        text: `Auth is also enforced at the database level through Supabase Row-Level Security policies. Users can only delete their own comments or see specific event records because the database policies itself check the authenticated user's ID. Even if someone bypassed the frontend and hit the API directly, the RLS policies would reject unauthorized operations. Its also combined with a bunch of custom validations in the backend.`,
+      },
+    ],
+  },
+  'CineChat': {
+    sections: [
+      {
+        label: 'hardest problem',
+        title: 'Infinite Recursion Without Infinite Load Times',
+        text: `Reddit-style nested comments are a performance nightmare if you fetch the whole tree all at once. I used a self-referencing MongoDB schema with compound indexes on parent ID and movie ID to keep things fastt. The React side only fetches top-level comments and lazy-loads child threads on expand. It cut query times by nearly 50%. Sub-200ms initial paint even on deep threads.`,
+      },
+      {
+        label: 'architecture',
+        title: 'Dual-API Real-Time Search Layer',
+        text: `The search layer syncs TMDB and OMDB data in real-time. TMDB handles the posters and discovery while OMDB fills in metadata like cast info and plot. It's all lazy-loaded to keep perceived latency sub-200ms. The discussion database is fully decoupled from the external APIs, so movie threads stay up even if an API goes down.`,
+      },
+      {
+        label: 'security',
+        title: 'Silent Refresh + Middleware-Driven Ownership',
+        text: `JWT auth with silent refresh token rotation so sessions stay alive without a random re-login. Every like, delete, or comment action runs through ownership validation middleware before touching the database. If you don't own it, the request dies immediately.`,
+      },
+    ],
+  },
+}
+
 function App() {
+  const [openDive, setOpenDive] = useState(null)
+
+  const toggleDive = (name) => {
+    setOpenDive((prev) => (prev === name ? null : name))
+  }
+
   const projects = [
     {
       name: 'Hybrid Semantic Code Search',
@@ -72,41 +160,72 @@ function App() {
         <p className="section-header">Projects</p>
         <div className="section-line" />
         <div className="project-list">
-          {projects.map((project) => (
-            <div className="project-row" key={project.name}>
-              <div className="project-content">
-                <div className="project-top">
-                  <div className="project-title-group">
-                    <span className="project-name">{project.name}</span>
-                    {project.live && (
-                      <a className="project-visit-link" href={project.live} target="_blank" rel="noopener noreferrer">
-                        visit ↗
+          {projects.map((project) => {
+            const dive = deepDives[project.name]
+            const isOpen = openDive === project.name
+
+            return (
+              <div className={`project-row ${isOpen ? 'project-row--expanded' : ''}`} key={project.name}>
+                <div className="project-content">
+                  <div className="project-top">
+                    <div className="project-title-group">
+                      <span className="project-name">{project.name}</span>
+                      {project.live && (
+                        <a className="project-visit-link" href={project.live} target="_blank" rel="noopener noreferrer">
+                          visit ↗
+                        </a>
+                      )}
+                    </div>
+                    <span className="project-tag">{project.tag}</span>
+                  </div>
+                  <div className="project-desc">{project.desc}</div>
+                  <div className="project-links">
+                    {project.repo && (
+                      <a className="project-repo-link" href={project.repo} target="_blank" rel="noopener noreferrer">
+                        <GithubIcon />{project.name == "CineChat" ? "backend repo" : "repo"}
                       </a>
                     )}
+                    {project.clientRepo && (
+                      <a className="project-repo-link" href={project.clientRepo} target="_blank" rel="noopener noreferrer">
+                        <GithubIcon />frontend repo
+                      </a>
+                    )}
+                    {dive && (
+                      <button
+                        className={`deep-dive-toggle ${isOpen ? 'deep-dive-toggle--active' : ''}`}
+                        onClick={() => toggleDive(project.name)}
+                      >
+                        <ChevronIcon open={isOpen} />
+                        {isOpen ? 'hide internals' : 'view internals'}
+                      </button>
+                    )}
                   </div>
-                  <span className="project-tag">{project.tag}</span>
                 </div>
-                <div className="project-desc">{project.desc}</div>
-                <div className="project-links">
-                  {project.repo && (
-                    <a className="project-repo-link" href={project.repo} target="_blank" rel="noopener noreferrer">
-                      <GithubIcon />{project.name == "CineChat" ? "backend repo" : "repo"}
-                    </a>
-                  )}
-                  {project.clientRepo && (
-                    <a className="project-repo-link" href={project.clientRepo} target="_blank" rel="noopener noreferrer">
-                      <GithubIcon />frontend repo
-                    </a>
-                  )}
+
+                {/* Tech tags */}
+                <div className="project-tech">
+                  {project.tech.map((t) => (
+                    <span key={t}>{t}</span>
+                  ))}
                 </div>
+
+                {/* Deep Dive Panel */}
+                {dive && (
+                  <div className={`deep-dive ${isOpen ? 'deep-dive--open' : ''}`}>
+                    <div className="deep-dive-inner">
+                      {dive.sections.map((section, idx) => (
+                        <div className="deep-dive-section" key={idx}>
+                          <div className="deep-dive-label">{section.label}</div>
+                          <div className="deep-dive-title">{section.title}</div>
+                          <p className="deep-dive-text">{section.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="project-tech">
-                {project.tech.map((t) => (
-                  <span key={t}>{t}</span>
-                ))}
-              </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       </section>
 

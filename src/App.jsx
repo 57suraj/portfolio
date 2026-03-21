@@ -84,7 +84,7 @@ const deepDives = {
       },
       {
         label: 'architecture',
-        title: 'Dual-API Real-Time Search Layer',
+        title: 'Dual-API Real-Time Search Layerr',
         text: `The search layer syncs TMDB and OMDB data in real-time. TMDB handles the posters and discovery while OMDB fills in metadata like cast info and plot. It's all lazy-loaded to keep perceived latency sub-200ms. The discussion database is fully decoupled from the external APIs, so movie threads stay up even if an API goes down.`,
       },
       {

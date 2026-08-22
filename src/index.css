@@ -356,8 +356,9 @@ section {
   border: none;
   font-family: 'Space Mono', monospace;
   font-size: 0.75rem;
-  font-weight: 700;
-  color: #666;
+  font-weight: 900;
+  font-style: italic;
+  color: #7a7878;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -456,6 +457,12 @@ section {
 }
 
 /* ===== Experience ===== */
+.exp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .exp-card {
   border: 1px solid #1a1a1a;
   padding: 24px;
@@ -494,10 +501,51 @@ section {
   margin-bottom: 14px;
 }
 
+.exp-dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #d4c89a;
+  margin-right: 8px;
+  vertical-align: middle;
+  box-shadow: 0 0 6px rgba(212, 200, 154, 0.6);
+  animation: blink 1.6s ease-in-out infinite;
+}
+
 .exp-desc {
   font-size: 0.8rem;
   color: #555;
   line-height: 1.7;
+}
+
+.exp-points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.exp-point {
+  position: relative;
+  padding-left: 16px;
+  font-size: 0.8rem;
+  color: #555;
+  line-height: 1.7;
+  max-width: 780px;
+  transition: color 0.2s ease;
+}
+
+.exp-point::before {
+  content: '>';
+  position: absolute;
+  left: 0;
+  color: #d4c89a;
+  opacity: 0.45;
+}
+
+.exp-card:hover .exp-point {
+  color: #666;
 }
 
 .exp-tech {
@@ -575,6 +623,15 @@ section {
 
   .exp-top {
     flex-direction: column;
+  }
+
+  .exp-card {
+    padding: 20px 18px;
+  }
+
+  .exp-point {
+    font-size: 0.76rem;
+    max-width: 100%;
   }
 
   .contact-links {

@@ -131,7 +131,32 @@ function App() {
     },
   ]
 
-  const techStack = ['NestJS', 'NodeJS', 'TypeScript', 'AWS', 'MySQL', 'PostgreSQL', 'Redis', 'Prisma', 'TypeORM',]
+  const experience = [
+    {
+      role: 'Software Developer',
+      company: 'LiveMindz Solutions, Hyderabad',
+      duration: 'MAR 2026 — PRESENT',
+      current: true,
+      points: [
+        `Designed the PostgreSQL schema for a new platform from scratch, then migrated 32,000 users off MongoDB with every foreign key, relation and integrity constraint preserved. Zero data loss, with the associated S3 assets moved in parallel.`,
+        `Owned the AWS deployment end-to-end. Provisioned the ECS cluster, RDS instance, ALB, target groups and Route53 records from scratch, split development and production environments, and collapsed the release process into a single Docker-based script.`,
+        `Built the platform on both sides. Next.js on the client, a Fastify monorepo on the API layer, while running the branch strategy, merge process and release flow for the codebase.`,
+        `Shipped a second backend in Python and FastAPI with AI capabilities baked in, serving as the proxy layer the platform consumes. Redesigned its core tables and indexes to bring API response times down, and handle production issues across both services.`,
+      ],
+      tech: ['PostgreSQL', 'AWS ECS', 'RDS', 'Docker', 'Fastify', 'Next.js', 'FastAPI', 'Python', 'TypeScript'],
+    },
+    {
+      role: 'Software Developer Intern',
+      company: 'LiveMindz Solutions | SheJobs',
+      duration: 'DEC 2025 — MAR 2026',
+      points: [
+        `Owned backend development for a production e-commerce platform. Redesigned the database schema, introduced strategic indexing and rewrote the slow MySQL queries, cutting average response times by ~60%.`,
+        `Enforced ACID-compliant order flows across 8 microservices spanning payments, inventory and fulfillment, backed by Redis caching, a refactored service architecture with structured error handling, and Bull MQ for asynchronous job processing.`,
+        `Integrated the META Business API and AWS SNS to power customer notifications and messaging, while shipping features and clearing bugs across the core backend services.`,
+      ],
+      tech: ['Node.js', 'Express', 'TypeScript', 'MySQL', 'Redis', 'Bull MQ', 'Microservices', 'AWS SNS'],
+    },
+  ]
 
   return (
     <div className="portfolio">
@@ -233,25 +258,29 @@ function App() {
       <section className="experience fade-in">
         <p className="section-header">Experience</p>
         <div className="section-line" />
-        <div className="exp-card">
-          <div className="exp-top">
-            <span className="exp-role">Backend Developer Intern</span>
-            <span className="exp-duration">3 MONTHS</span>
-          </div>
-          <div className="exp-company">LiveMindz | SheJobs</div>
-          <p className="exp-desc">
-            Owned backend services end-to-end across a production codebase.
-            Redesigned critical database schemas and wrote optimized queries
-            that cut response times significantly. Refactored legacy service
-            layers, implemented cache invalidation strategies with Redis,
-            and shipped multiple features from schema migration to API
-            endpoint to deployment.
-          </p>
-          <div className="exp-tech">
-            {techStack.map((tech) => (
-              <span key={tech}>{tech}</span>
-            ))}
-          </div>
+        <div className="exp-list">
+          {experience.map((job) => (
+            <div className="exp-card" key={job.role}>
+              <div className="exp-top">
+                <span className="exp-role">{job.role}</span>
+                <span className="exp-duration">
+                  {job.current && <span className="exp-dot" />}
+                  {job.duration}
+                </span>
+              </div>
+              <div className="exp-company">{job.company}</div>
+              <ul className="exp-points">
+                {job.points.map((point, idx) => (
+                  <li className="exp-point" key={idx}>{point}</li>
+                ))}
+              </ul>
+              <div className="exp-tech">
+                {job.tech.map((tech) => (
+                  <span key={tech}>{tech}</span>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

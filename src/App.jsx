@@ -167,7 +167,7 @@ function App() {
       <header className="hero fade-in">
         <p className="hero-prefix">// portfolio</p>
         <h1>Suraj Ambati<span className="cursor" /></h1>
-        <p className="tagline">Full stack developer. I build things that just...work, then make them work better.</p>
+        <p className="tagline">Forward deployed by instinct. I ship LLM systems into messy production and stay until they work.</p>
       </header>
 
       {/* About */}
@@ -176,10 +176,10 @@ function App() {
         <div className="section-line" />
         <p className="about-text">
           <span className="prompt">&gt;</span>
-          I focus on building systems that solve actual problems rather than just chasing new tech.
-          Whether it's designing resilient database schemas, optimizing slow queries, or building
-          interfaces users actually understand, I care about shipping code that delivers value and
-          doesn't break when it matters most.
+          I run a SaaS that hit 150+ users in its first month: an LLM agent with evals, token budgets
+          and an MCP server, live in production. At work I migrated 32,000 users off MongoDB with zero
+          data loss and stood up the AWS stack alone. Give me a messy system and a real customer
+          problem, and I'll own the path from schema to prompt to deploy until it works.
         </p>
       </section>
 

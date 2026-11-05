@@ -564,30 +564,6 @@ section {
   text-transform: uppercase;
 }
 
-/* ===== Stack ===== */
-.stack-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.stack-row {
-  display: grid;
-  grid-template-columns: 110px 1fr;
-  gap: 12px;
-  align-items: baseline;
-}
-
-.stack-label {
-  font-size: 0.7rem;
-  color: #555;
-  letter-spacing: 1px;
-}
-
-.stack-row .exp-tech {
-  margin-top: 0;
-}
-
 /* ===== Footer / Contact ===== */
 .contact {
   padding: 64px 0 48px;
@@ -651,11 +627,6 @@ section {
 
   .exp-card {
     padding: 20px 18px;
-  }
-
-  .stack-row {
-    grid-template-columns: 1fr;
-    gap: 6px;
   }
 
   .exp-point {

@@ -41,7 +41,7 @@ const deepDives = {
     sections: [
       {
         label: 'hardest problem',
-        title: 'Structure-Aware Chunking with BraceTracker',
+        title: 'AST-Aware Chunking with BraceTracker',
         text: `Most RAG pipelines blindly split code at fixed token intervals, cutting functions in half, orphaning JSDoc from its target, or merging unrelated blocks. I wrote a custom BraceTracker class that pre-scans every file to build a line-by-line depth map of brace balance, while masking out all non-code regions like strings, block comments, and template literal interpolations with nested braces. The chunker only detects boundaries at depth 0, meaning it never splits mid-function or mid-class. Large classes get split by method, not by line count. Each method chunk carries its parent class name for retrieval context. Each of the 12,000+ chunks is a complete, self-contained unit of logic.`,
       },
       {
@@ -71,7 +71,26 @@ const deepDives = {
       {
         label: 'security',
         title: 'Shift-Left Access Control with Database RLS',
-        text: `Auth is also enforced at the database level through Supabase Row-Level Security policies. Users can only delete their own comments or see specific event records because the database policies themselves check the authenticated user's ID. Even if someone bypassed the frontend and hit the API directly, the RLS policies would reject unauthorized operations. It's also combined with custom validations in the backend.`,
+        text: `Auth is also enforced at the database level through Supabase Row-Level Security policies. Users can only delete their own comments or see specific event records because the database policies itself check the authenticated user's ID. Even if someone bypassed the frontend and hit the API directly, the RLS policies would reject unauthorized operations. Its also combined with a bunch of custom validations in the backend.`,
+      },
+    ],
+  },
+  'CineChat': {
+    sections: [
+      {
+        label: 'hardest problem',
+        title: 'Infinite Recursion Without Infinite Load Times',
+        text: `Reddit-style nested comments are a performance nightmare if you fetch the whole tree all at once. I used a self-referencing MongoDB schema with compound indexes on parent ID and movie ID to keep things fastt. The React side only fetches top-level comments and lazy-loads child threads on expand. It cut query times by nearly 50%. Sub-200ms initial paint even on deep threads.`,
+      },
+      {
+        label: 'architecture',
+        title: 'Dual-API Real-Time Search Layerr',
+        text: `The search layer syncs TMDB and OMDB data in real-time. TMDB handles the posters and discovery while OMDB fills in metadata like cast info and plot. It's all lazy-loaded to keep perceived latency sub-200ms. The discussion database is fully decoupled from the external APIs, so movie threads stay up even if an API goes down.`,
+      },
+      {
+        label: 'security',
+        title: 'Silent Refresh + Middleware-Driven Ownership',
+        text: `JWT auth with silent refresh token rotation so sessions stay alive without a random re-login. Every like, delete, or comment action runs through ownership validation middleware before touching the database. If you don't own it, the request dies immediately.`,
       },
     ],
   },
@@ -88,26 +107,35 @@ function App() {
     {
       name: 'Hybrid Semantic Code Search',
       tag: 'RAG + retrieval',
-      desc: 'Retrieval system over 25+ curated production JavaScript repositories (12,000+ code chunks). Hybrid BM25 + pgvector search with weighted score fusion inside PostgreSQL, a sub-150ms FastAPI backend, and an LLM reranker that scores relevance but never generates code. Every result traces to its source file. Zero hallucinations by design.',
-      tech: ['RAG', 'Hybrid Search', 'BM25', 'pgvector', 'LLM Reranking', 'FastAPI', 'OpenAI'],
+      desc: 'Agentic retrieval pipeline over a hand-curated corpus of 25+ production JavaScript repositories (12,000+ AST-aware chunks). Hybrid BM25 + pgvector search with weighted score fusion executed inside PostgreSQL, sub-150ms P95 latency via FastAPI, and an LLM reranking layer that evaluates contextual relevance and returns results with full source provenance. Zero hallucinations by design.',
+      tech: ['Python', 'FastAPI', 'React', 'Supabase', 'pgvector', 'OpenAI', 'BM25'],
       repo: 'https://github.com/57suraj/Hybrid-search-project',
       live: 'https://hybrid-search-two.vercel.app/',
     },
     {
       name: 'Connect 4',
       tag: 'real-time',
-      desc: 'Event discovery platform with RAG over vector embeddings for query-based recommendations across 100+ events. Multi-layer auth combining Supabase Row-Level Security with 10+ server validations, atomic join/leave through transactional Postgres RPC functions, and real-time group chat on Supabase Realtime.',
-      tech: ['RAG', 'Vector Embeddings', 'Row-Level Security', 'Postgres RPC', 'Supabase Realtime', 'Next.js'],
+      desc: 'Event discovery platform with vector-embedded semantic search (OpenAI text-embedding-3-small) across 1,000+ events. Multi-layer auth combining Supabase Row-Level Security policies with 10+ server-side validation rules. Real-time group chat via Supabase Realtime subscriptions, with atomic join/leave operations through edge-invoked RPC functions.',
+      tech: ['Next.js', 'TypeScript', 'Supabase', 'RAG', 'Tailwind', 'Real-time'],
       repo: 'https://github.com/57suraj/connect-4',
       live: 'https://connect-4-pearl.vercel.app/',
+    },
+    {
+      name: 'CineChat',
+      tag: 'full-stack',
+      desc: 'Reddit meets Letterboxd. A movie discussion platform with infinitely nested comment threads powered by recursive React tree rendering and a self-referencing MongoDB schema with 3+ compound indexes. Real-time keystroke search across TMDB + OMDB APIs, lazy-loaded comment trees for sub-200ms paint, and JWT auth with silent refresh token rotation.',
+      tech: ['React', 'Node.js', 'Tailwind', 'Express', 'MongoDB', 'JWT', 'TMDB API', 'Framer-Motion', 'Indexing'],
+      repo: 'https://github.com/57suraj/movie-server',
+      clientRepo: 'https://github.com/57suraj/movie-client',
+      live: 'https://movie-client-tau.vercel.app',
     },
   ]
 
   const experience = [
     {
       role: 'Software Developer',
-      company: 'Livemindz Solutions, Hyderabad',
-      duration: 'MAR 2026 - PRESENT',
+      company: 'LiveMindz Solutions, Hyderabad',
+      duration: 'MAR 2026 — PRESENT',
       current: true,
       points: [
         `Shipped an AI job-application agent to 150+ users: a Manifest V3 Chrome extension that runs server-issued leases, with per-platform rate limits and backoffs, and autofills forms on 50+ ATS platforms including Workday, Greenhouse and Lever.`,
@@ -122,33 +150,14 @@ function App() {
     },
     {
       role: 'Software Developer Intern',
-      company: 'Livemindz Solutions, Hyderabad',
-      duration: 'DEC 2025 - MAR 2026',
+      company: 'LiveMindz Solutions | SheJobs',
+      duration: 'DEC 2025 — MAR 2026',
       points: [
-        `Owned backend development for a production e-commerce platform: redesigned the schema, introduced strategic indexing and rewrote the heaviest MySQL queries to bring response times down.`,
-        `Enforced ACID-compliant order flows across payment, inventory and fulfillment services, backed by Redis caching and Bull MQ for asynchronous job processing.`,
-        `Integrated the META Business API and AWS SNS to power customer notifications and messaging.`,
+        `Owned backend development for a production e-commerce platform. Redesigned the database schema, introduced strategic indexing and rewrote the slow MySQL queries, cutting average response times by ~60%.`,
+        `Enforced ACID-compliant order flows across 8 microservices spanning payments, inventory and fulfillment, backed by Redis caching, a refactored service architecture with structured error handling, and Bull MQ for asynchronous job processing.`,
+        `Integrated the META Business API and AWS SNS to power customer notifications and messaging, while shipping features and clearing bugs across the core backend services.`,
       ],
-      tech: ['MySQL', 'ACID', 'Redis', 'Bull MQ', 'AWS SNS', 'Meta Business API'],
-    },
-  ]
-
-  const stack = [
-    {
-      label: 'AI',
-      items: ['LLM Evaluation', 'LLM Classification', 'Prompt Engineering', 'MCP', 'RAG', 'AWS Bedrock', 'Claude API', 'OpenAI API', 'Token Budgets'],
-    },
-    {
-      label: 'Retrieval',
-      items: ['Hybrid Search', 'BM25', 'pgvector', 'Vector Embeddings', 'Semantic Search', 'Recommendation Systems'],
-    },
-    {
-      label: 'Systems',
-      items: ['Event-Driven Architecture', 'Microservices', 'Kafka', 'Bull MQ', 'Concurrency', 'Rate Limiting', 'OAuth 2.1', 'Webhooks'],
-    },
-    {
-      label: 'Data + Cloud',
-      items: ['PostgreSQL', 'Row-Level Security', 'Redis', 'Query Optimization', 'Data Migration', 'AWS ECS', 'Kubernetes', 'Docker'],
+      tech: ['Node.js', 'Express', 'TypeScript', 'MySQL', 'Redis', 'Bull MQ', 'Microservices', 'AWS SNS'],
     },
   ]
 
@@ -158,7 +167,7 @@ function App() {
       <header className="hero fade-in">
         <p className="hero-prefix">// portfolio</p>
         <h1>Suraj Ambati<span className="cursor" /></h1>
-        <p className="tagline">Software engineer shipping production AI systems, from first schema to live users.</p>
+        <p className="tagline">Full stack developer. I build things that just...work, then make them work better.</p>
       </header>
 
       {/* About */}
@@ -167,41 +176,11 @@ function App() {
         <div className="section-line" />
         <p className="about-text">
           <span className="prompt">&gt;</span>
-          I own AI systems end to end: the data model, the LLM pipeline, the evals, the cloud and
-          the release. I've migrated 32,000 users onto a schema I designed, stood up an AWS stack
-          alone, and shipped an AI agent to real users. I'm looking for forward deployed roles,
-          where the job is to walk into a messy real system and make AI work inside it.
+          I focus on building systems that solve actual problems rather than just chasing new tech.
+          Whether it's designing resilient database schemas, optimizing slow queries, or building
+          interfaces users actually understand, I care about shipping code that delivers value and
+          doesn't break when it matters most.
         </p>
-      </section>
-
-      {/* Experience */}
-      <section className="experience fade-in">
-        <p className="section-header">Experience</p>
-        <div className="section-line" />
-        <div className="exp-list">
-          {experience.map((job) => (
-            <div className="exp-card" key={job.role}>
-              <div className="exp-top">
-                <span className="exp-role">{job.role}</span>
-                <span className="exp-duration">
-                  {job.current && <span className="exp-dot" />}
-                  {job.duration}
-                </span>
-              </div>
-              <div className="exp-company">{job.company}</div>
-              <ul className="exp-points">
-                {job.points.map((point, idx) => (
-                  <li className="exp-point" key={idx}>{point}</li>
-                ))}
-              </ul>
-              <div className="exp-tech">
-                {job.tech.map((tech) => (
-                  <span key={tech}>{tech}</span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* Projects */}
@@ -231,7 +210,12 @@ function App() {
                   <div className="project-links">
                     {project.repo && (
                       <a className="project-repo-link" href={project.repo} target="_blank" rel="noopener noreferrer">
-                        <GithubIcon />repo
+                        <GithubIcon />{project.name == "CineChat" ? "backend repo" : "repo"}
+                      </a>
+                    )}
+                    {project.clientRepo && (
+                      <a className="project-repo-link" href={project.clientRepo} target="_blank" rel="noopener noreferrer">
+                        <GithubIcon />frontend repo
                       </a>
                     )}
                     {dive && (
@@ -273,17 +257,29 @@ function App() {
         </div>
       </section>
 
-      {/* Stack */}
-      <section className="stack fade-in">
-        <p className="section-header">Stack</p>
+      {/* Experience */}
+      <section className="experience fade-in">
+        <p className="section-header">Experience</p>
         <div className="section-line" />
-        <div className="stack-list">
-          {stack.map((group) => (
-            <div className="stack-row" key={group.label}>
-              <span className="stack-label">{group.label}</span>
+        <div className="exp-list">
+          {experience.map((job) => (
+            <div className="exp-card" key={job.role}>
+              <div className="exp-top">
+                <span className="exp-role">{job.role}</span>
+                <span className="exp-duration">
+                  {job.current && <span className="exp-dot" />}
+                  {job.duration}
+                </span>
+              </div>
+              <div className="exp-company">{job.company}</div>
+              <ul className="exp-points">
+                {job.points.map((point, idx) => (
+                  <li className="exp-point" key={idx}>{point}</li>
+                ))}
+              </ul>
               <div className="exp-tech">
-                {group.items.map((item) => (
-                  <span key={item}>{item}</span>
+                {job.tech.map((tech) => (
+                  <span key={tech}>{tech}</span>
                 ))}
               </div>
             </div>

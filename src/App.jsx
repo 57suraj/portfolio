@@ -138,15 +138,13 @@ function App() {
       duration: 'MAR 2026 — PRESENT',
       current: true,
       points: [
-        `Shipped an AI job-application agent to 150+ users: a Manifest V3 Chrome extension that runs server-issued leases, with per-platform rate limits and backoffs, and autofills forms on 50+ ATS platforms including Workday, Greenhouse and Lever.`,
-        `Rolled out LLM question classification and answer verification behind shadow, on and off flags, backed by golden-set evals, corpus audits and a parity check against a baseline before release.`,
-        `Cut LLM cost with layered caching and budgets: verdicts shared across users per question wording, match scores cached 14 days per resume hash, per-user daily token budgets, and a DeepSeek primary with a Claude fallback under a hard deadline inside a 60s serverless limit.`,
-        `Built an OAuth 2.1 MCP server (PKCE, dynamic client registration, refresh-token rotation) exposing 27 tools to Claude, on multi-tenant Postgres with row-level security and composite foreign keys so no row can point at another user's data.`,
+        `Cut LLM cost with layered caching and budgets: verdicts cached and shared across users, match scores cached 14 days per resume hash, per-user daily token budgets, and a DeepSeek primary with a Claude fallback under a hard deadline.`,
+        `Built OAuth 2.1 auth (PKCE, dynamic client registration, refresh-token rotation) on multi-tenant Postgres with row-level security and composite foreign keys so no row can point at another user's data.`,
         `Built candidate-to-job matching on AWS Bedrock (Nova Pro, Converse API): scores each job 0-100 against skills extracted from the resume, cached in Redis, with bounded concurrency and per-call timeouts so a slow model never blocks a page.`,
         `Designed the PostgreSQL schema from scratch, then migrated 32,000 users out of MongoDB with every foreign key, relation and integrity constraint preserved, zero data loss, and a parallel S3 asset migration.`,
         `Solely owned the AWS deployment: ECS, RDS, ALB and Route53 from scratch, separate dev and prod environments, and releases automated into a single Docker-based script. Built the Fastify monorepo and the FastAPI AI proxy behind it.`,
       ],
-      tech: ['LLM Evaluation', 'AWS Bedrock', 'Claude API', 'MCP', 'OAuth 2.1', 'PostgreSQL', 'Redis', 'AWS ECS', 'Docker', 'FastAPI', 'Fastify', 'Chrome MV3'],
+      tech: ['AWS Bedrock', 'LLM Caching', 'Claude API', 'OAuth 2.1', 'PostgreSQL', 'Redis', 'AWS ECS', 'Docker', 'FastAPI', 'Fastify'],
     },
     {
       role: 'Software Developer Intern',

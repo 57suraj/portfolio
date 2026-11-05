@@ -181,6 +181,36 @@ function App() {
         </p>
       </section>
 
+      {/* Experience */}
+      <section className="experience fade-in">
+        <p className="section-header">Experience</p>
+        <div className="section-line" />
+        <div className="exp-list">
+          {experience.map((job) => (
+            <div className="exp-card" key={job.role}>
+              <div className="exp-top">
+                <span className="exp-role">{job.role}</span>
+                <span className="exp-duration">
+                  {job.current && <span className="exp-dot" />}
+                  {job.duration}
+                </span>
+              </div>
+              <div className="exp-company">{job.company}</div>
+              <ul className="exp-points">
+                {job.points.map((point, idx) => (
+                  <li className="exp-point" key={idx}>{point}</li>
+                ))}
+              </ul>
+              <div className="exp-tech">
+                {job.tech.map((tech) => (
+                  <span key={tech}>{tech}</span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Projects */}
       <section className="projects fade-in">
         <p className="section-header">Projects</p>
@@ -252,36 +282,6 @@ function App() {
               </div>
             )
           })}
-        </div>
-      </section>
-
-      {/* Experience */}
-      <section className="experience fade-in">
-        <p className="section-header">Experience</p>
-        <div className="section-line" />
-        <div className="exp-list">
-          {experience.map((job) => (
-            <div className="exp-card" key={job.role}>
-              <div className="exp-top">
-                <span className="exp-role">{job.role}</span>
-                <span className="exp-duration">
-                  {job.current && <span className="exp-dot" />}
-                  {job.duration}
-                </span>
-              </div>
-              <div className="exp-company">{job.company}</div>
-              <ul className="exp-points">
-                {job.points.map((point, idx) => (
-                  <li className="exp-point" key={idx}>{point}</li>
-                ))}
-              </ul>
-              <div className="exp-tech">
-                {job.tech.map((tech) => (
-                  <span key={tech}>{tech}</span>
-                ))}
-              </div>
-            </div>
-          ))}
         </div>
       </section>
 
